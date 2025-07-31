@@ -1,9 +1,14 @@
 import os
+import nltk
+
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DATASET_PATH = os.path.join(PROJECT_ROOT, 'local_only', 'dataset', 'feedback-prize-2021')
 HF_HOME = os.path.join(PROJECT_ROOT, 'local_only', 'HF_HOME')
 os.environ['HF_HOME'] = HF_HOME
+
+NLTK_HOME = os.path.join(PROJECT_ROOT, 'local_only', 'NLTK_HOME')
+nltk.data.path.append(NLTK_HOME)
 
 CHECKPOINT_DIR = os.path.join(PROJECT_ROOT, 'local_only', 'checkpoints')
 
