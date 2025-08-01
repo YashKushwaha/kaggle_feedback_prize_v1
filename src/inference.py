@@ -2,7 +2,7 @@
 
 from src.config import DATASET_PATH, MODEL_NAME, EPOCHS, BATCH_SIZE, MAX_LEN, CHECKPOINT_DIR, CONFIG_FILENAME
 from src.model_class import BertWithLinearClassifier
-
+from nltk.tokenize import sent_tokenize
 from transformers import AutoTokenizer, AutoModel
 import torch.nn as nn
 import torch
@@ -26,28 +26,31 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 def preprocess(text):
     return tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LEN)
 
-def predict(text):
-    inputs = preprocess(text)
+def predict(sentences):
+    inputs = preprocess(sentences)  # assumes batch of strings
     inputs = {k: v.to(DEVICE) for k, v in inputs.items() if k in ["input_ids", "attention_mask"]}
 
     with torch.no_grad():
         outputs = model(**inputs)
-        logits = outputs["logits"]
+        logits = outputs["logits"]  # shape: [batch_size, num_labels]
         probs = F.softmax(logits, dim=1)
-        pred_label = torch.argmax(probs, dim=1).item()
-    
-    return pred_label, probs.cpu().numpy()
+        pred_labels = torch.argmax(probs, dim=1)  # shape: [batch_size]
 
-example = "In today's world of technology, not everything made can be trusted."
-label_id, confidence = predict(example)
-print('label_id -> ', label_id)
-print('confidence -> ', confidence)
+    return pred_labels.cpu(), probs.cpu()
 
-# Optional: convert label ID to name
+example = "In today's world of technology, not everything made can be trusted. Therefore verify everything with your own senses."
+sentences  = sent_tokenize(example)
+print('sentences  -> ', sentences )
+
 id2label = model_config['id2label'] 
 id2label = {int(i):j for i,j in id2label.items()}
-print('id2label -> ', id2label)
 
-label = id2label[label_id]
-_ = confidence[0][label_id]
-print(f"Predicted label: {label} ({_:.4f} confidence)")
+all_preds, all_probs = predict(sentences)
+
+for i, sent in enumerate(sentences):
+    label_id = all_preds[i].item()
+    confidence = all_probs[i][label_id].item()
+    label = id2label[label_id]
+    print(f"Sentence: {sent}")
+    print(f"Predicted Label: {label} ({confidence:.4f} confidence)")
+    print("=" * 40)
