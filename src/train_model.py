@@ -1,4 +1,5 @@
 # train_frozen_bert_classifier.py
+import json
 
 import torch
 from torch import nn
@@ -9,7 +10,7 @@ import os
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-from src.config import DATASET_PATH, MODEL_NAME, EPOCHS, BATCH_SIZE, MAX_LEN, CHECKPOINT_DIR
+from src.config import DATASET_PATH, MODEL_NAME, EPOCHS, BATCH_SIZE, MAX_LEN, CHECKPOINT_DIR, CONFIG_FILENAME
 from src.model_class import BertWithLinearClassifier
 # --- 2. Load Dataset ---
 print("📦 Loading dataset...")
@@ -28,7 +29,7 @@ class SaveBestLinearHeadCallback(TrainerCallback):
         self.best_loss = float("inf")
         self.save_dir = save_dir
         os.makedirs(save_dir, exist_ok=True)
-        
+
     def on_evaluate(self, args, state, control, **kwargs):
         eval_loss = kwargs["metrics"]["eval_loss"]
         if eval_loss < self.best_loss:
@@ -110,3 +111,15 @@ trainer.train()
 print("📊 Final Evaluation on Test Set:")
 results = trainer.evaluate(test_subset)
 print(results)
+
+# Save config
+config_data = {
+    "num_labels": len(label_list),
+    "label2id": label2id,
+    "id2label": id2label,
+    "max_len": MAX_LEN
+}
+
+
+with open(os.path.join(CHECKPOINT_DIR, CONFIG_FILENAME), "w") as f:
+    json.dump(config_data, f)

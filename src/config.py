@@ -11,10 +11,12 @@ NLTK_HOME = os.path.join(PROJECT_ROOT, 'local_only', 'NLTK_HOME')
 nltk.data.path.append(NLTK_HOME)
 
 CHECKPOINT_DIR = os.path.join(PROJECT_ROOT, 'local_only', 'checkpoints')
+CONFIG_FILENAME = os.path.join(CHECKPOINT_DIR, 'model_config.json')
+
 
 TOKENIZER_DIR = os.path.join(PROJECT_ROOT, 'local_only', 'tokenizer')
 CHECKPOINT_NAME = "classifier_weights.pth"
-CONFIG_FILENAME = "model_config.json"
+
 MAX_LEN = 128
 #MODEL_NAME = "deberta-v3-large"
 MODEL_NAME = "bert-base-uncased"
