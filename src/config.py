@@ -15,12 +15,13 @@ CHECKPOINT_DIR = os.path.join(PROJECT_ROOT, 'local_only', 'checkpoints')
 TOKENIZER_DIR = os.path.join(PROJECT_ROOT, 'local_only', 'tokenizer')
 CHECKPOINT_NAME = "classifier_weights.pth"
 CONFIG_FILENAME = "model_config.json"
-MAX_LEN = 512
-MODEL_NAME = "deberta-v3-large"
+MAX_LEN = 128
+#MODEL_NAME = "deberta-v3-large"
+MODEL_NAME = "bert-base-uncased"
 
 MODEL_DIR = os.path.join(PROJECT_ROOT, 'local_only', 'models')
 
-EPOCHS = 20
+EPOCHS = 5
 BATCH_SIZE = 64
 LR = 5e-4
 OVERWRITE_EXISTING_FILE = False
