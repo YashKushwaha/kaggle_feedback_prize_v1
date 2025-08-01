@@ -3,12 +3,12 @@
 from src.config import DATASET_PATH, MODEL_NAME, EPOCHS, BATCH_SIZE, MAX_LEN, CHECKPOINT_DIR, CONFIG_FILENAME
 from src.model_class import BertWithLinearClassifier
 from nltk.tokenize import sent_tokenize
-from transformers import AutoTokenizer, AutoModel
 import torch.nn as nn
 import torch
 import os
 import json 
 import torch.nn.functional as F
+from src.train.data_utils import get_tokenizer
 
 classifier_weights = os.path.join(CHECKPOINT_DIR, "best_linear_head.pt")
 with open(CONFIG_FILENAME, 'r') as f:
@@ -21,7 +21,7 @@ model.classifier.load_state_dict(torch.load(classifier_weights))
 model.to(DEVICE)
 model.eval()
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+tokenizer = get_tokenizer(MODEL_NAME)
 
 def preprocess(text):
     return tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LEN)

@@ -23,8 +23,8 @@ MODEL_NAME = "bert-base-uncased"
 
 MODEL_DIR = os.path.join(PROJECT_ROOT, 'local_only', 'models')
 
-EPOCHS = 10
-BATCH_SIZE = 64
+EPOCHS = 5
+BATCH_SIZE = 128
 LR = 5e-4
 OVERWRITE_EXISTING_FILE = False
 

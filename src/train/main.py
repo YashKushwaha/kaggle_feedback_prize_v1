@@ -1,7 +1,10 @@
 import os
 import json
 import warnings
+import datetime
+from pathlib import Path
 import torch
+
 from transformers import Trainer, TrainingArguments
 
 from src.train.config import *
@@ -25,7 +28,7 @@ ds = encode_dataset(ds, tokenizer, label2id, MAX_LEN)
 print("🧠 Building model...")
 model = BertWithLinearClassifier(MODEL_NAME, num_labels=len(label_list))
 
-TEST_MODE = True
+TEST_MODE = False
 
 if TEST_MODE:
     train_dataset = ds["train"].select(range(1000))
@@ -36,16 +39,22 @@ else:
     eval_dataset = ds["validation"]#.select(range(200))
     test_subset = ds["test"]#.select(range(200))
 
+now =datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+
 training_args = TrainingArguments(
     output_dir=os.path.join(CHECKPOINT_DIR, "results"),
+    fp16=True,
     eval_strategy="epoch",
-    save_strategy="no",
-    logging_dir=os.path.join(CHECKPOINT_DIR, "logs"),
+    save_strategy="epoch",
+    logging_dir=os.path.join(CHECKPOINT_DIR, "logs", now),
+    logging_strategy="epoch",  # 🆕 log at each eval
+    logging_steps=1,           # 🆕 if using 'steps' strategy
+    report_to="tensorboard",   # 🆕 enable tensorboard
     per_device_train_batch_size=BATCH_SIZE,
     per_device_eval_batch_size=BATCH_SIZE,
     num_train_epochs=EPOCHS,
-    load_best_model_at_end=False,
-    report_to="none"
+    load_best_model_at_end=True,
+    dataloader_num_workers=4,
 )
 
 trainer = Trainer(
@@ -59,7 +68,13 @@ trainer = Trainer(
 )
 
 print("🚀 Training...")
-trainer.train()
+if Path(training_args.output_dir).exists() and any(Path(training_args.output_dir).glob("checkpoint-*")):
+    print("🔁 Resuming from last checkpoint...")
+    trainer.train(resume_from_checkpoint=True)
+else:
+    print("🚀 Starting fresh training...")
+    trainer.train()
+
 
 print("📊 Final Evaluation on Test Set:")
 results = trainer.evaluate(test_subset)
