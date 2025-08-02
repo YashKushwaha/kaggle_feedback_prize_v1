@@ -4268,6 +4268,21 @@ objc = ["pyobjc-framework-Cocoa ; sys_platform == \"darwin\""]
 win32 = ["pywin32 ; sys_platform == \"win32\""]
 
 [[package]]
+name = "seqeval"
+version = "1.2.2"
+description = "Testing framework for sequence labeling"
+optional = false
+python-versions = "*"
+groups = ["dev"]
+files = [
+    {file = "seqeval-1.2.2.tar.gz", hash = "sha256:f28e97c3ab96d6fcd32b648f6438ff2e09cfba87f05939da9b3970713ec56e6f"},
+]
+
+[package.dependencies]
+numpy = ">=1.14.0"
+scikit-learn = ">=0.21.3"
+
+[[package]]
 name = "setuptools"
 version = "80.9.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -5144,4 +5159,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "14775444e78a5083503e567192cc7f781008b5e2bdd2f1bdbcf432bbb027f74a"
+content-hash = "6beb09e89e9cf473367e1bafe3fdc21e0378a31e4a52e94be6b5bdb9af04dd7f"

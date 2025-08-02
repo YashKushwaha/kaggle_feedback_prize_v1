@@ -1,6 +1,6 @@
 
 
-from src.config import DATASET_PATH, MODEL_NAME, EPOCHS, BATCH_SIZE, MAX_LEN, CHECKPOINT_DIR, CONFIG_FILENAME
+from src.config import DATASET_PATH, MODEL_NAME, EPOCHS, BATCH_SIZE, MAX_LEN, CHECKPOINT_DIR, CONFIG_FILENAME, DEVICE
 from src.model_class import BertWithLinearClassifier
 from nltk.tokenize import sent_tokenize
 import torch.nn as nn
@@ -14,8 +14,7 @@ classifier_weights = os.path.join(CHECKPOINT_DIR, "best_linear_head.pt")
 with open(CONFIG_FILENAME, 'r') as f:
     model_config = json.load(f)
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-NUM_LABELS = model_config['num_labels']  # or however many labels you have
+NUM_LABELS = model_config['num_labels']
 model = BertWithLinearClassifier(model_name = MODEL_NAME, num_labels=NUM_LABELS)
 model.classifier.load_state_dict(torch.load(classifier_weights))
 model.to(DEVICE)

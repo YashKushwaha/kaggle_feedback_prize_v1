@@ -1,6 +1,6 @@
 import os
 import nltk
-
+import torch
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DATASET_PATH = os.path.join(PROJECT_ROOT, 'local_only', 'dataset', 'feedback-prize-2021')
@@ -31,3 +31,4 @@ OVERWRITE_EXISTING_FILE = False
 #os.environ['TRANSFORMERS_CACHE'] = MODEL_DIR
 
 
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
